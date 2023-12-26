@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="es_MX">
+
+
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cajero automático Frida</title>
+    <link rel="stylesheet" href="./Styles/main.css">
+</head>
+
+
+<body>
+  <h1>Cajero Automático</h1>
+  <div class="container">
+    <!-- Interfaz gráfica con HTML -->
+    <div class="form-group">
+      <label for="cuenta">Selecciona una cuenta</label>
+      <select id="cuenta">
+        <option value="0">Cuenta 1</option>
+        <option value="1">Cuenta 2</option>
+        <option value="2">Cuenta 3</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="password">Ingresa tu password</label>
+      <input type="password" id="password">
+    </div>
+    <div class="form-group">
+      <label for="opcion">Elige una opción</label>
+      <select id="opcion">
+        <option value="consulta">Consulta de saldo</option>
+        <option value="ingreso">Ingreso de saldo</option>
+        <option value="retiro">Retiro de saldo</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="monto">Ingresa el monto</label>
+      <input type="number" id="monto" min="0">
+    </div>
+    <button id="boton">Ejecutar</button>
+    <div id="alerta" class="alert"></div>
+  </div>
+  <script>
+    // Lógica de programación con JavaScript
+    // Arreglo de objetos que contiene la información de las cuentas
+    let cuentas = [
+      {
+        nombre: "Cuenta 1",
+        password: "1234",
+        saldo: 500
+      },
+      {
+        nombre: "Cuenta 2",
+        password: "5678",
+        saldo: 500
+      },
+      {
+        nombre: "Cuenta 3",
+        password: "9012",
+        saldo: 500
+      }
+    ];
+
+    // Variables que almacenan los elementos de la interfaz
+    let cuenta = document.getElementById("cuenta");
+    let password = document.getElementById("password");
+    let opcion = document.getElementById("opcion");
+    let monto = document.getElementById("monto");
+    let boton = document.getElementById("boton");
+    let alerta = document.getElementById("alerta");
+
+    // Función que se ejecuta cuando se hace click en el botón
+    function ejecutar() {
+      // Obtener los valores de los elementos
+      let cuentaValor = cuenta.value;
+      let passwordValor = password.value;
+      let opcionValor = opcion.value;
+      let montoValor = monto.value;
+
+      // Buscar la cuenta seleccionada en el arreglo de objetos
+      let cuentaObjeto = cuentas.find(function(c) {
+        return c.nombre == "Cuenta " + (parseInt(cuentaValor) + 1);
+      });
+
+      // Validar que el password sea correcto
+      if (passwordValor == cuentaObjeto.password) {
+        // Ejecutar la opción elegida
+        switch (opcionValor) {
+          case "consulta":
+            // Mostrar el saldo de la cuenta
+            mostrarAlerta("success", "Tu saldo es de $" + cuentaObjeto.saldo);
+            break;
+          case "ingreso":
+            // Validar que el monto sea válido
+            if (montoValor > 0) {
+              // Sumar el monto al saldo de la cuenta
+              cuentaObjeto.saldo += parseFloat(montoValor);
+              // Mostrar el nuevo saldo de la cuenta
+              mostrarAlerta("success", "Has ingresado $" + montoValor + " a tu cuenta. Tu nuevo saldo es de $" + cuentaObjeto.saldo);
+            } else {
+              // Mostrar un mensaje de error
+              mostrarAlerta("danger", "El monto debe ser mayor que cero");
+            }
+            break;
+          case "retiro":
+            // Validar que el monto sea válido
+            if (montoValor > 0) {
+              // Restar el monto al saldo de la cuenta
+              cuentaObjeto.saldo -= parseFloat(montoValor);
+              // Mostrar el nuevo saldo de la cuenta
+              mostrarAlerta("success", "Has retirado $" + montoValor + " de tu cuenta. Tu nuevo saldo es de $" + cuentaObjeto.saldo);
+            } else {
+              // Mostrar un mensaje de error
+              mostrarAlerta("danger", "El monto debe ser mayor que cero");
+            }
+            break;
+        }
+      } else {
+        // Mostrar un mensaje de error
+        mostrarAlerta("danger", "El password es incorrecto");
+      }
+    }
+
+    // Función que muestra un mensaje de alerta
+    function mostrarAlerta(tipo, mensaje) {
+      // Asignar la clase y el texto según el tipo de alerta
+      if (tipo == "success") {
+        alerta.className = "alert alert-success";
+        alerta.textContent = mensaje;
+      } else if (tipo == "danger") {
+        alerta.className = "alert alert-danger";
+        alerta.textContent = mensaje;
+      }
+      // Mostrar la alerta
+      alerta.style.display = "block";
+    }
+
+    // Agregar un evento al botón para ejecutar la función
+    boton.addEventListener("click", ejecutar);
+  </script>
+</body>
+</html>
